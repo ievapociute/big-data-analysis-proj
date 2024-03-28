@@ -53,7 +53,8 @@ def transform_image(image):
     noisy_image = salt_pepp_noise(image, int(0.1 * black_pixels)) #0.1 as requested
     #noise_time = time.time() - start_time
 
-    return bnw_image, blurred, noisy_image#, bnw_time, blur_time, noise_time
+    return bnw_image, blurred, noisy_image
+    #, bnw_time, blur_time, noise_time
 
 
 def transform_and_save_image(image_path, output_dir):
@@ -62,14 +63,14 @@ def transform_and_save_image(image_path, output_dir):
     and save the transformed images to a specified directory, returning the time taken for each transformation.
     """
     image = cv2.imread(image_path)
-    bnw_image, blurred, noisy_image, bnw_time, blur_time, noise_time = transform_image(image)
+    bnw_image, blurred, noisy_image = transform_image(image) #add for time bnw_time, blur_time, noise_time
     
     base_name = os.path.splitext(os.path.basename(image_path))[0]
     cv2.imwrite(os.path.join(output_dir, f"{base_name}_bnw.jpg"), bnw_image)
     cv2.imwrite(os.path.join(output_dir, f"{base_name}_blurred.jpg"), blurred)
     cv2.imwrite(os.path.join(output_dir, f"{base_name}_noisy.jpg"), noisy_image)
 
-    return bnw_time, blur_time, noise_time
+    #return bnw_time, blur_time, noise_time
 
 def process_images_parallel(input_dir, output_dir):
     """
@@ -84,12 +85,10 @@ def process_images_parallel(input_dir, output_dir):
         if f.endswith('.jpg')
         ]
     
-    chunksize = 2
     with Pool(processes=cpu_count()) as pool:
         results = pool.starmap(
             transform_and_save_image, 
-            [(path, output_dir) for path in image_paths],
-            chunksize = chunksize
+            [(path, output_dir) for path in image_paths]
             )
 
     # Compute total time for each transformation
