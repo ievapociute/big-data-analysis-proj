@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  mongodb1:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo1-data:/data/db
+    command: mongod --replSet rs0 --bind_ip localhost,mongodb1
+
+  mongodb2:
+    image: mongo
+    volumes:
+      - mongo2-data:/data/db
+    command: mongod --replSet rs0 --bind_ip localhost,mongodb2
+
+  mongodb3:
+    image: mongo
+    volumes:
+      - mongo3-data:/data/db
+    command: mongod --replSet rs0 --bind_ip localhost,mongodb3
+
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jupyter
+    ports:
+      - 8888:8888
+    volumes:
+      - ./notebooks:/home/jovyan/work
+      - ./csv-files:/home/jovyan/csv-files
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    networks:
+      - mongo-cluster-network
+
+networks:
+  mongo-cluster-network:
+    driver: bridge
+
+volumes:
+  mongo1-data:
+  mongo2-data:
+  mongo3-data:
