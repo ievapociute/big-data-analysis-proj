@@ -1,0 +1,9 @@
+Data Cleansing
+*   **Dropped rows** where key columns (`MMSI`, `Latitude`, `Longitude`, `timestamp`) are null.
+*   **Removed duplicates** based on `MMSI`, `Latitude`, `Longitude`, and `timestamp`.
+* **Filtered out** invalid latitude and longitude values (Latitude: -90 to 90, Longitude: -180 to 180).
+* **Excluded rows** with unrealistic speeds (greater than 107 km/h) based on calculated speed. Treshold was selected based on current quickest ship - HSC Francisco.  
+
+Longest distance Travelled
+*  Using `geopy` module, we calculated the distance traveled between consecutive points for each vessel. This step required handling missing values carefully to avoid calculation errors.
+4. We identified the vessel as `219133000` with `790 km`
